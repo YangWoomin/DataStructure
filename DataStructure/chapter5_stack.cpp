@@ -7,19 +7,9 @@ void expressionTest() {
 	getline(cin, expression);
 	while (expression != "q") {
 		if ((head = convertInfixToPostfix(expression)) != NULL) {
-			cout << "Correct expression!" << endl;
-			while ((node = dequeue(&head)) != NULL) {
-				if (node->type == 0) {
-					cout << node->value << " ";
-				}
-				else {
-					printf("%c ", node->value);
-				}
-				node->left = NULL;
-				node->right = NULL;
-				free(node);
-			}
-			cout << endl;
+			cout << "Correct expression!" << endl << "Postfix expression : ";
+			int result = calculatePostfix(&head);
+			cout << "Answer : " << result << endl;
 		}
 		else {
 			cout << "Wrong infix expression!" << endl;
@@ -123,6 +113,15 @@ _Queue* dequeue(_Queue **head) {
 	return NULL;
 }
 
+bool isEmptyQueue(_Queue **head) {
+	if (*head == NULL) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void freeQueue(_Queue **head) {
 	_Queue *temp = NULL;
 	while ((temp = dequeue(head)) != NULL) {
@@ -167,6 +166,9 @@ bool rightBracket(_Stack **stackHead, _Queue **queueHead, int value) {
 		while ((element = stackPop(stackHead)) != 0) {
 			check = operators.find(element);
 			if (check >= 0) {
+				if (isEmptyQueue(queueHead)) {
+					return false;
+				}
 				enqueue(queueHead, element, 1);
 				continue;
 			}
@@ -203,13 +205,19 @@ _Queue* convertInfixToPostfix(string expression) {
 	if (!expression.empty()) {
 		int i, len = expression.size(), operatorFlag = 0, operandFlag = 0,
 			leftBracketFlag = 0, rightBracketFlag = 0, operandFlag2 = 0;
-		string operators = "+-/*%";
+		string operators = "+-?/*%";
 		string leftBrackets = "({[";
 		string rightBrackets = ")}]";
 		string operands = "0123456789";
 		char space = ' ';
 		for (i = 0; i < len; i++) {
 			char element = expression[i];
+
+			if (operators.find(element) == '?') {
+				freeStack(&stackHead);
+				freeQueue(&queueHead);
+				return NULL;
+			}
 
 			int operatorCheck = operators.find(element);
 			if (operatorCheck >= 0) {
@@ -236,7 +244,7 @@ _Queue* convertInfixToPostfix(string expression) {
 					while ((element2 = stackPeek(&stackHead, j++)) != -1) {
 						int check = operators.find(element2);
 						if (check >= 0) {
-							if (operatorCheck < check) {
+							if (check - operatorCheck > 2) {
 								enqueue(&queueHead, stackPop(&stackHead), 1);
 							}
 						}
@@ -314,6 +322,7 @@ _Queue* convertInfixToPostfix(string expression) {
 			freeQueue(&queueHead);
 			return NULL;
 		}
+		
 		if (operatorFlag) {
 			freeStack(&stackHead);
 			freeQueue(&queueHead);
@@ -324,12 +333,57 @@ _Queue* convertInfixToPostfix(string expression) {
 			inputNumber(&queueHead, num, top);
 		}
 		int lastElement = 0;
-		while ((lastElement = stackPop(&stackHead)) != 0) {
+		if ((lastElement = stackPop(&stackHead)) != 0) {
 			enqueue(&queueHead, lastElement, 1);
+		}
+		if (stackPeek(&stackHead, 0) != -1) {
+			freeStack(&stackHead);
+			freeQueue(&queueHead);
+			return NULL;
 		}
 		return queueHead;
 	}
 	else {
 		return NULL;
 	}
+}
+
+int calculatePostfix(_Queue **queueHead) {
+	_Queue *node = NULL;
+	_Stack *stackHead = NULL;
+	while ((node = dequeue(queueHead)) != NULL) {
+		if (node->type == 0) {
+			stackPush(&stackHead, node->value);
+			cout << node->value << " ";
+		}
+		else {
+			int num1, num2, result = 0;
+			num1 = stackPop(&stackHead);
+			num2 = stackPop(&stackHead);
+			switch (node->value) {
+			case '+' :
+				result = num1 + num2;
+				break;
+			case '-' :
+				result = num2 - num1;
+				break;
+			case '*':
+				result = num1 * num2;
+				break;
+			case '/':
+				result = num2 / num1;
+				break;
+			case '%':
+				result = num2 % num1;
+				break;
+			default:
+				result = 0;
+				break;
+			}
+			stackPush(&stackHead, result);
+			printf("%c ", node->value);
+		}
+	}
+	cout << endl;
+	return stackPop(&stackHead);
 }
