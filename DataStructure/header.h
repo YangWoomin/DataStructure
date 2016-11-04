@@ -25,17 +25,25 @@ void showList(LinkedList *head);
 void reverseList(LinkedList **head);
 
 // chapter 5 - stack
-typedef struct StackNode {
-	char value;
-	struct StackNode *next;
-} operatorStack;
-typedef struct QueueNode {
+typedef struct _StackNode {
 	int value;
-	struct QueueNode *next;
-} operandQueue;
+	struct _StackNode *next;
+} _Stack;
+typedef struct _QueueNode {
+	int value;
+	int type;
+	struct _QueueNode *left;
+	struct _QueueNode *right;
+} _Queue;
 void expressionTest();
-bool checkInfix(string expression);
-void operatorPush(operatorStack **head, char op);
-char operatorPop(operatorStack **head);
-bool bracketCheck(operatorStack **head, char op);
-bool checkInfix(string expression);
+_Queue* convertInfixToPostfix(string expression);
+void stackPush(_Stack **head, int value);
+int stackPop(_Stack **head);
+int stackPeek(_Stack **head, int index);
+void freeStack(_Stack **head);
+void enqueue(_Queue **head, int value, int type);
+_Queue* dequeue(_Queue **head);
+void freeQueue(_Queue **head);
+void inputNumber(_Queue **head, int num[], int top);
+bool leftBracket(_Stack **stackHead, int value);
+bool rightBracket(_Stack **stackHead, _Queue **queueHead, int value);
