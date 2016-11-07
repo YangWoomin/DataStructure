@@ -152,6 +152,7 @@
     <ClCompile Include="chapter2_recursive.cpp" />
     <ClCompile Include="chapter4_linkedlist.cpp" />
     <ClCompile Include="chapter5_stack.cpp" />
+    <ClCompile Include="chapter7_tree.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

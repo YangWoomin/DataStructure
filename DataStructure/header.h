@@ -24,7 +24,7 @@ void deleteNode(LinkedList **head, int value);
 void showList(LinkedList *head);
 void reverseList(LinkedList **head);
 
-// chapter 5 - stack
+// chapter 5, 6 - stack, queue
 typedef struct _StackNode {
 	int value;
 	struct _StackNode *next;
@@ -49,3 +49,21 @@ void inputNumber(_Queue **head, int num[], int top);
 bool leftBracket(_Stack **stackHead, int value);
 bool rightBracket(_Stack **stackHead, _Queue **queueHead, int value);
 int calculatePostfix(_Queue **queueHead);
+
+// chapter 7 - tree
+typedef struct _TreeNode {
+	string *word;
+	string *meaning;
+	_TreeNode *left;
+	_TreeNode *right;
+} _Tree;
+void wordManager();
+void showCommandInTree();
+void showWords(_Tree *root);
+void showWords(_Tree *root);
+void removeAllNodes(_Tree *root);
+_Tree* searchTreeNode(_Tree **root, _Tree **parent, string word);
+void createTreeNode(_Tree **root, string word, string meaning);
+void insertTreeNode(_Tree **root, string word, string meaning);
+void removeTreeNode(_Tree **root, string word);
+void deleteTreeNode(_Tree **root, string word);

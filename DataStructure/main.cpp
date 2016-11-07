@@ -1,6 +1,6 @@
 #include "header.h"
 
 int main(void) {
-	expressionTest();
+	wordManager();
 	return 0;
 }
