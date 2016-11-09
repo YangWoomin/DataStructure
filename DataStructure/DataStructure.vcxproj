@@ -153,6 +153,7 @@
     <ClCompile Include="chapter4_linkedlist.cpp" />
     <ClCompile Include="chapter5_stack.cpp" />
     <ClCompile Include="chapter7_tree.cpp" />
+    <ClCompile Include="chapter8_heap.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

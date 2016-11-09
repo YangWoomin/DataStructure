@@ -1,6 +1,6 @@
 #include "header.h"
 
 int main(void) {
-	wordManager();
+	maxHeapSimulation();
 	return 0;
 }

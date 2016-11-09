@@ -1,12 +1,11 @@
 #pragma once
-#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-// chapter 2
+// chapter 2 - recursive
 int sub_recursive(int num);
 int sub_iterative(int num);
 int power_recursive(int base, int expo);
@@ -67,3 +66,16 @@ void createTreeNode(_Tree **root, string word, string meaning);
 void insertTreeNode(_Tree **root, string word, string meaning);
 void removeTreeNode(_Tree **root, string word);
 void deleteTreeNode(_Tree **root, string word);
+
+//chapter 8 - heap
+// array heap
+#define ARRAY_HEAP_MAX_NUM 65
+typedef struct _ArrayHeapNode {
+	int heap_size;
+	int values[ARRAY_HEAP_MAX_NUM];
+} _ArrayHeap;
+void maxHeapSimulation();
+void showCommandInArrayHeap();
+void showArrayHeap(_ArrayHeap **heap);
+void insertArrayHeap(_ArrayHeap **heap, int value);
+int deleteArrayHeap(_ArrayHeap **heap);
