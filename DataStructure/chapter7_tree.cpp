@@ -2,7 +2,7 @@
 
 void wordManager() {
 	string command;
-	_Tree *root = NULL;
+	_TreeNode *root = NULL;
 	showCommandInTree();
 	getline(cin, command);
 	while (command != "q") {
@@ -24,7 +24,7 @@ void wordManager() {
 			string word;
 			cout << "Enter the word : ";
 			getline(cin, word);
-			_Tree *node = searchTreeNode(&root, NULL, word);
+			_TreeNode *node = searchTreeNode(&root, NULL, word);
 			if (node) {
 				cout << "Word : " << *(node->word) << endl;
 				cout << "Meaning : " << *(node->meaning) << endl;
@@ -54,7 +54,7 @@ void showCommandInTree() {
 }
 
 
-void showWords(_Tree *root) {
+void showWords(_TreeNode *root) {
 	if (root) {
 		showWords(root->left);
 		cout << "Word : " << *(root->word) << endl;
@@ -63,7 +63,7 @@ void showWords(_Tree *root) {
 	}
 }
 
-void removeAllNodes(_Tree *root) {
+void removeAllNodes(_TreeNode *root) {
 	if (root) {
 		removeAllNodes(root->left);
 		removeAllNodes(root->right);
@@ -71,8 +71,8 @@ void removeAllNodes(_Tree *root) {
 	}
 }
 
-_Tree* searchTreeNode(_Tree **root, _Tree **parent, string word) {
-	_Tree *node = *root, *temp = NULL;
+_TreeNode* searchTreeNode(_TreeNode **root, _TreeNode **parent, string word) {
+	_TreeNode *node = *root, *temp = NULL;
 	while (node) {
 		temp = node;
 		int check = word.compare(*(node->word));
@@ -92,14 +92,14 @@ _Tree* searchTreeNode(_Tree **root, _Tree **parent, string word) {
 	return NULL;
 }
 
-void createTreeNode(_Tree **root, string word, string meaning) {
-	_Tree *node = NULL, *parent = NULL;
+void createTreeNode(_TreeNode **root, string word, string meaning) {
+	_TreeNode *node = NULL, *parent = NULL;
 	node = searchTreeNode(root, &parent, word);
 	if (node != NULL) {
 		return;
 	}
 	
-	node = (_Tree*)malloc(sizeof(_Tree));
+	node = (_TreeNode*)malloc(sizeof(_TreeNode));
 	if (node == NULL) {
 		return;
 	}
@@ -121,9 +121,9 @@ void createTreeNode(_Tree **root, string word, string meaning) {
 	}
 }
 
-void insertTreeNode(_Tree **root, string word, string meaning) {
+void insertTreeNode(_TreeNode **root, string word, string meaning) {
 	if (!word.empty() && !meaning.empty()) {
-		_Tree *node = searchTreeNode(root, NULL, word);
+		_TreeNode *node = searchTreeNode(root, NULL, word);
 		if (node == NULL) {
 			createTreeNode(root, word, meaning);
 		}
@@ -133,8 +133,8 @@ void insertTreeNode(_Tree **root, string word, string meaning) {
 	}
 }
 
-void removeTreeNode(_Tree **root, string word) {
-	_Tree *node = NULL, *parent = NULL, *child = NULL, *pchild = NULL;
+void removeTreeNode(_TreeNode **root, string word) {
+	_TreeNode *node = NULL, *parent = NULL, *child = NULL, *pchild = NULL;
 	node = searchTreeNode(root, &parent, word);
 	if (node) {
 		if (node->left && node->right) {
@@ -208,9 +208,9 @@ void removeTreeNode(_Tree **root, string word) {
 	}
 }
 
-void deleteTreeNode(_Tree **root, string word) {
+void deleteTreeNode(_TreeNode **root, string word) {
 	if (!word.empty()) {
-		_Tree *node = searchTreeNode(root, NULL, word);
+		_TreeNode *node = searchTreeNode(root, NULL, word);
 		if (node == NULL) {
 			cout << "The word doesn't exist" << endl;
 		}

@@ -1,6 +1,6 @@
 #include "header.h"
 
 int main(void) {
-	maxHeapSimulation();
+	huffmanTest();
 	return 0;
 }
