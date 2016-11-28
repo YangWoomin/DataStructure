@@ -3,6 +3,11 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+#include <thread>
+#include <Windows.h>
 
 using namespace std;
 
@@ -68,7 +73,7 @@ void insertTreeNode(_TreeNode **root, string word, string meaning);
 void removeTreeNode(_TreeNode **root, string word);
 void deleteTreeNode(_TreeNode **root, string word);
 
-//chapter 8 - heap
+// chapter 8 - heap
 // array heap
 #define ARRAY_HEAP_MAX_NUM 65
 typedef struct _ArrayHeapNode {
@@ -108,3 +113,43 @@ int createHuffmanNodes(map<int, _HuffmanCode>* m);
 void showHuffmanCode(map<int, _HuffmanCode> *m);
 void encodeWord(map<int, _HuffmanCode> *m);
 void decodeCode(map<int, _HuffmanCode> *m);
+
+// chapter 9 - sorting : selection, insertion, bubble, shell, merge, quick, heap, radix
+class Sorting {
+private:
+	static int size;
+	static int* _array;
+	static map<string, int> Status;
+	static CRITICAL_SECTION cs;
+	static int count;
+public:
+	void setSize(int size);
+	int getSize();
+	static void setArray();
+	int* copyArray();
+	static void showArray(int* arr, int size);
+	static void initialize();
+	static void reset();
+	static void finish();
+	static void showSortingStatus(string name, int status);
+	void increaseCount();
+	void decreaseCount();
+	static int getCount();
+	void updateStatus(string name, int status);
+	static void showSortingProcess();
+	virtual void sorting() = 0;
+};
+
+class SelectionSorting : public Sorting {
+public:
+	void sorting();
+};
+
+class InsertionSorting : public Sorting {
+public:
+	void sorting();
+};
+
+void sortingSimulation();
+void showCommandInSorting();
+void sortingManager(string command);

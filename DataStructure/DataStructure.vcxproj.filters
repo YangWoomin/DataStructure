@@ -38,5 +38,8 @@
     <ClCompile Include="chapter8_heap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="chapter9_sorting.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
