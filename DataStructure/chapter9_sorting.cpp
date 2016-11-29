@@ -149,6 +149,8 @@ void Sorting::updateStatus(string name, int status) {
 
 void Sorting::showSortingProcess() {
 	system("cls");
+	// I think it is not necessary to control this function by the critical statement
+	// because just reading the data doesn't influence to get correct result
 	map<string, int>::iterator mi;
 	for (mi = Status.begin(); mi != Status.end(); mi++) {
 		cout << mi->first << " : " << mi->second << "%" << endl;
@@ -242,6 +244,7 @@ void ShellSorting::sorting() {
 	delete arr;
 }
 
+// I tried to reduce the length of this function code
 void MergeSorting::merge(int* arr, int left, int right) {
 	if (left == right) return;
 	int mid = (left + right) / 2;
@@ -303,6 +306,7 @@ void sortingManager(string command) {
 		}
 	}
 
+	// to show progress status
 	/*while (Sorting::getCount()) {
 		this_thread::sleep_for(1s);
 		Sorting::showSortingProcess();
