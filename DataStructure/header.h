@@ -8,6 +8,7 @@
 #include <ctime>
 #include <thread>
 #include <Windows.h>
+#include <math.h>
 
 using namespace std;
 
@@ -115,21 +116,24 @@ void encodeWord(map<int, _HuffmanCode> *m);
 void decodeCode(map<int, _HuffmanCode> *m);
 
 // chapter 9 - sorting : selection, insertion, bubble, shell, merge, quick, heap, radix
-
 class Sorting {
 private:
-	const static int MAX_SIZE = 1000000;
+	const static int MAX_SIZE = 100000000;
 	static int size;
-	static int* _array;
 	static map<string, int> Status;
 	static CRITICAL_SECTION cs;
 	static int count;
+protected:
+	int* arr;
+	static int* _array;
+	const static int unit[9];
 public:
 	void setSize(int size);
 	int getSize();
 	static void setArray();
 	int* copyArray();
 	static void showArray(int* arr, int size);
+	static void showArray(vector<int>& v);
 	static void initialize();
 	static void reset();
 	static void finish();
@@ -143,40 +147,47 @@ public:
 };
 
 class SelectionSorting : public Sorting {
-private:
-	int* arr;
 public:
 	void sorting();
 };
 
 class InsertionSorting : public Sorting {
-private:
-	int* arr;
 public:
 	void sorting();
 };
 
 class BubbleSorting : public Sorting {
-private:
-	int* arr;
 public:
 	void sorting();
 };
 
 class ShellSorting : public Sorting {
-private:
-	int* arr;
 public:
 	void sorting();
 };
 
 class MergeSorting : public Sorting {
 private:
-	int* arr;
 	int* sorted;
 public:
 	void sorting();
 	void merge(int* arr, int left, int right);
+};
+
+class QuickSorting : public Sorting {
+public:
+	void sorting();
+	void quick(int* arr, int left, int right);
+};
+
+class HeapSorting : public Sorting {
+public:
+	void sorting();
+};
+
+class RadixSorting : public Sorting {
+public:
+	void sorting();
 };
 
 void sortingSimulation();

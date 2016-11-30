@@ -1,5 +1,6 @@
 #include "header.h"
 
+const int Sorting::unit[9] = { 1, 2, 4, 5, 10, 20, 25, 50, 100 };
 int Sorting::size = 0;
 int* Sorting::_array = NULL;
 map<string, int> Sorting::Status;
@@ -89,6 +90,13 @@ void Sorting::showArray(int* arr, int size) {
 	cout << endl;
 }
 
+void Sorting::showArray(vector<int>& v) {
+	vector<int>::iterator vi;
+	for (vi = v.begin(); vi != v.end(); vi++)
+		cout << *vi << " ";
+	cout << endl;
+}
+
 void Sorting::initialize() {
 	InitializeCriticalSection(&cs);
 	reset();
@@ -149,7 +157,7 @@ void Sorting::updateStatus(string name, int status) {
 
 void Sorting::showSortingProcess() {
 	system("cls");
-	// I think it is not necessary to control this function by the critical statement
+	// I think it is not necessary to control this function by the critical section statement
 	// because just reading the data doesn't influence to get correct result
 	map<string, int>::iterator mi;
 	for (mi = Status.begin(); mi != Status.end(); mi++) {
@@ -176,7 +184,7 @@ void SelectionSorting::sorting() {
 	}
 	decreaseCount();
 	cout << "Selection finished!" << endl;
-	showArray(arr, size);
+	// showArray(arr, size);
 	delete arr;
 }
 
@@ -195,7 +203,7 @@ void InsertionSorting::sorting() {
 	}
 	decreaseCount();
 	cout << "Insertion finished!" << endl;
-	showArray(arr, size);
+	// showArray(arr, size);
 	delete arr;
 }
 
@@ -215,7 +223,7 @@ void BubbleSorting::sorting() {
 	}
 	decreaseCount();
 	cout << "Bubble finished!" << endl;
-	showArray(arr, size);
+	// showArray(arr, size);
 	delete arr;
 }
 
@@ -223,6 +231,14 @@ void ShellSorting::sorting() {
 	if (arr != NULL) delete arr;
 	arr = copyArray();
 	int size = getSize();
+	int count = log2(size);
+	int increment;
+	if (size > 1) increment = 100 / count;
+	else increment = 100;
+	int index = 0;
+	while (unit[index] < increment) index++;
+	increment = unit[index];
+	
 	for (int gap = size / 2; gap > 0; gap /= 2) {
 		if (gap % 2 == 0) {
 			gap++;
@@ -236,11 +252,13 @@ void ShellSorting::sorting() {
 				arr[k + gap] = key;
 			}
 		}
-		// How can I express the progress bar of this algorithms...
+		updateStatus("Shell", increment);
+		increment += unit[index];
 	}
+	updateStatus("Shell", 100);
 	decreaseCount();
 	cout << "Shell finished!" << endl;
-	showArray(arr, size);
+	// showArray(arr, size);
 	delete arr;
 }
 
@@ -268,8 +286,99 @@ void MergeSorting::sorting() {
 	merge(arr, 0, size - 1);
 	decreaseCount();
 	cout << "Merge finished!" << endl;
-	showArray(arr, size);
+	// showArray(arr, size);
 	delete sorted, arr;
+}
+
+void QuickSorting::quick(int* arr, int left, int right) {
+	if (left == right) return;
+	int pivot = arr[left], i = left, j = right + 1, temp;
+	while (i < j) {
+		do { i++; } while (i <= j && arr[i] < pivot);
+		do { j--; } while (j >= i && arr[j] > pivot);
+		if (i < j) {
+			temp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = temp;
+		}
+	}
+	temp = arr[j];
+	arr[j] = pivot;
+	arr[left] = temp;
+	if(j > left) quick(arr, left, j - 1);
+	if(j < right) quick(arr, j + 1, right);
+}
+
+void QuickSorting::sorting() {
+	if (arr != NULL) delete arr;
+	arr = copyArray();
+	int size = getSize();
+	quick(arr, 0, size - 1);
+	showArray(arr, size);
+	decreaseCount();
+	cout << "Quick finished!" << endl;
+	delete arr;
+}
+
+void HeapSorting::sorting() {
+	if (arr != NULL) delete arr;
+	arr = copyArray();
+	int size = getSize();
+	// push the numbers in the heap array
+	for (int i = 0; i < size; i++) {
+		int j = i, newOne = arr[j];
+		while (j != 0 && arr[(j - 1) / 2] > newOne) {
+			arr[j] = arr[(j - 1) / 2];
+			j = (j - 1) / 2;
+		}
+		arr[j] = newOne;
+	}
+	// pop the numbers ascending
+	int* arr2 = new int[size];
+	for (int i = 0; i < size; i++) {
+		// cout << arr[i] << " "; // if arr2 is not used
+		arr2[i] = arr[0];
+		int lastOne = arr[size - i - 1], j = 1;
+		while(j < size - i - 1) {
+			if (j + 1 < size - i - 1 && arr[j] > arr[j + 1]) j++;
+			if (arr[j] < lastOne) arr[(j - 1) / 2] = arr[j];
+			else break;
+			j = j * 2 + 1;
+		}
+		arr[(j - 1) / 2] = lastOne;
+	}
+	showArray(arr2, size);
+	decreaseCount();
+	cout << "Heap finished!" << endl;
+	delete arr, arr2;
+}
+
+void RadixSorting::sorting() {
+	int size = getSize(), digit = 10;
+	vector<int> queue, buckets[10];
+	queue.reserve(size);
+	for (int i = 0; i < size; i++) {
+		buckets[_array[i] % digit].push_back(_array[i]);
+	}
+	while (1) {
+		queue.clear();
+		int check = 0;
+		for (int i = 0; i < 10; i++) {
+			if (!buckets[i].empty()) {
+				queue.insert(queue.end(), buckets[i].begin(), buckets[i].end());
+				buckets[i].clear();
+				check++;
+			}
+		}
+		if (check == 1) break;
+		vector<int>::iterator vi;
+		for (vi = queue.begin(); vi != queue.end(); vi++)
+			buckets[((*vi) / digit) % 10].push_back(*vi);
+		digit *= 10;
+	}
+	showArray(queue);
+	decreaseCount();
+	cout << "Radix finished!" << endl;
 }
 
 void sortingManager(string command) {
@@ -303,10 +412,30 @@ void sortingManager(string command) {
 				threads.push_back(thread(&MergeSorting::sorting, ms));
 				ms.increaseCount();
 			}
+			else if (command[index] == 'q') {
+				QuickSorting qs;
+				threads.push_back(thread(&QuickSorting::sorting, qs));
+				qs.increaseCount();
+			}
+			else if (command[index] == 'h') {
+				HeapSorting hs;
+				threads.push_back(thread(&HeapSorting::sorting, hs));
+				hs.increaseCount();
+			}
+			else if (command[index] == 'r') {
+				RadixSorting rs;
+				threads.push_back(thread(&RadixSorting::sorting, rs));
+				rs.increaseCount();
+			}
 		}
 	}
 
-	// to show progress status
+	/* 
+	I tried to print the progress of each sorting process. (ex : Insertion 77%)
+	However, I think to know the precisional progress is impossible
+	because I'm not able to know how the progress is going on 
+	unless I already have the result of it.
+	*/
 	/*while (Sorting::getCount()) {
 		this_thread::sleep_for(1s);
 		Sorting::showSortingProcess();
