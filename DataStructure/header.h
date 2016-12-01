@@ -8,7 +8,6 @@
 #include <ctime>
 #include <thread>
 #include <Windows.h>
-#include <math.h>
 
 using namespace std;
 
@@ -118,7 +117,7 @@ void decodeCode(map<int, _HuffmanCode> *m);
 // chapter 9 - sorting : selection, insertion, bubble, shell, merge, quick, heap, radix
 class Sorting {
 private:
-	const static int MAX_SIZE = 100000000;
+	const static int MAX_SIZE = 30000000;
 	static int size;
 	static map<string, int> Status;
 	static CRITICAL_SECTION cs;
@@ -126,23 +125,18 @@ private:
 protected:
 	int* arr;
 	static int* _array;
-	const static int unit[9];
 public:
-	void setSize(int size);
 	int getSize();
+	void setSize(int size);
 	static void setArray();
+	static void showArray(int*arr, int size);
 	int* copyArray();
-	static void showArray(int* arr, int size);
-	static void showArray(vector<int>& v);
 	static void initialize();
 	static void reset();
 	static void finish();
-	static void showSortingStatus(string name, int status);
 	void increaseCount();
-	void decreaseCount();
+	void decreaseCount(int *arr, int size, string type, double runtime);
 	static int getCount();
-	void updateStatus(string name, int status);
-	static void showSortingProcess();
 	virtual void sorting() = 0;
 };
 
@@ -169,6 +163,7 @@ public:
 class MergeSorting : public Sorting {
 private:
 	int* sorted;
+	int increment;
 public:
 	void sorting();
 	void merge(int* arr, int left, int right);
