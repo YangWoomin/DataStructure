@@ -3,23 +3,23 @@
 vector<map<int, int>> Graph::graph;
 
 void graphSimulation() {
-showCommandInGraph();
-string command; cin >> command;
-while (command != "q") {
-	if (command == "c") {
-		Graph::initailize();
-		Graph::createNewGraph();
-	}
-	else if (command == "s") {
-		Graph::showGraph();
-	}
-	else if (command == "k") {
-		Kruskal kru;
-		kru.doAlgorithm();
-	}
 	showCommandInGraph();
-	cin >> command;
-}
+	string command; cin >> command;
+	while (command != "q") {
+		if (command == "c") {
+			Graph::initailize();
+			Graph::createNewGraph();
+		}
+		else if (command == "s") {
+			Graph::showGraph();
+		}
+		else if (command == "k") {
+			Kruskal kru;
+			kru.doAlgorithm();
+		}
+		showCommandInGraph();
+		cin >> command;
+	}
 }
 
 void showCommandInGraph() {
