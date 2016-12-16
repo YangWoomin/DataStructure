@@ -3,10 +3,13 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set>
+#include <list>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <thread>
+#include <algorithm>
 #include <Windows.h>
 
 using namespace std;
@@ -188,3 +191,24 @@ public:
 void sortingSimulation();
 void showCommandInSorting();
 void sortingManager(string command);
+
+// chapter 10 - graph : kruskal, prim, dijkstra, floyd, topological sort
+class Graph {
+protected:
+	static vector<map<int, int>> graph;
+public:
+	virtual void doAlgorithm() = 0;
+	static void initailize();
+	static void createNewGraph();
+	static void showGraph();
+};
+
+class Kruskal : public Graph {
+private:
+
+public:
+	void doAlgorithm();
+};
+
+void graphSimulation();
+void showCommandInGraph();

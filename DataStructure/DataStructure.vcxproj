@@ -149,6 +149,7 @@
     <ClInclude Include="header.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="chapter10_graph.cpp" />
     <ClCompile Include="chapter2_recursive.cpp" />
     <ClCompile Include="chapter4_linkedlist.cpp" />
     <ClCompile Include="chapter5_stack.cpp" />

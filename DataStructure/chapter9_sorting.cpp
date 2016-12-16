@@ -99,7 +99,7 @@ void Sorting::initialize() {
 void Sorting::reset() {
 	Status.clear();
 	setArray();
-	count = 0;
+	count = 0;	
 }
 
 void Sorting::finish() {

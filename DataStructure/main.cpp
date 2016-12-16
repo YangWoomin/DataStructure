@@ -1,6 +1,6 @@
 #include "header.h"
 
 int main(void) {
-	sortingSimulation();
+	graphSimulation();
 	return 0;
 }
