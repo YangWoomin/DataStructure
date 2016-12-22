@@ -25,7 +25,7 @@ typedef struct ListNode {
 	int value;
 	struct ListNode *next;
 } LinkedList;
-void LinkedListTest();
+void LinkedListSimulation();
 void showCommand();
 void insertNode(LinkedList **head, int value);
 void deleteNode(LinkedList **head, int value);
@@ -43,7 +43,7 @@ typedef struct _QueueNode {
 	struct _QueueNode *left;
 	struct _QueueNode *right;
 } _Queue;
-void expressionTest();
+void expressionSimulation();
 _Queue* convertInfixToPostfix(string expression);
 void stackPush(_Stack **head, int value);
 int stackPop(_Stack **head);
@@ -105,7 +105,7 @@ typedef struct _MyHuffmanCode {
 	unsigned long long code;
 	int size;
 } _HuffmanCode;
-void huffmanTest();
+void huffmanSimulation();
 void showCommandInHuffmanTest();
 _HuffmanNode* makeTree(_HuffmanNode *left, _HuffmanNode *right);
 void insertHuffmanNodeInMinHeap(_HuffmanHeap *heap, _HuffmanNode *node);
@@ -204,6 +204,11 @@ public:
 };
 
 class Kruskal : public Graph {
+public:
+	void doAlgorithm();
+};
+
+class Prim : public Graph {
 private:
 
 public:

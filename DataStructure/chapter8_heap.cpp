@@ -13,7 +13,7 @@ void maxHeapSimulation() {
 
 	string command;
 	showCommandInArrayHeap();
-	getline(cin, command);
+	getline(cin, command); getline(cin, command);
 	while (command != "q") {
 		if (command == "i") {
 			if (heap->heap_size < ARRAY_HEAP_MAX_NUM) {
@@ -103,14 +103,14 @@ int deleteArrayHeap(_ArrayHeap **heap) {
 
 /* Huffman code
 */
-void huffmanTest() {
+void huffmanSimulation() {
 	map<int, _HuffmanCode> *m = new map<int, _HuffmanCode>();
 	if (m == NULL) {
 		return;
 	}
 	string command;
 	showCommandInHuffmanTest();
-	getline(cin, command);
+	getline(cin, command); getline(cin, command);
 	while (command != "q") {
 		if (command == "n") {
 			int result = createHuffmanNodes(m);
@@ -164,7 +164,7 @@ _HuffmanNode* makeTree(_HuffmanNode *left, _HuffmanNode *right) {
 			rightTemp = rightTemp->right;
 		}
 		if (leftTemp && rightTemp) {
-			if (rightTemp->frequency > leftTemp->frequency) {
+			if (rightTemp->frequency >= leftTemp->frequency) {
 				node->left = left;
 				node->right = right;
 			}
@@ -210,7 +210,7 @@ _HuffmanNode* deleteHuffmanNodeInMinHeap(_HuffmanHeap *heap) {
 	if (i > 2) {
 		heap->huffman[i / 2] = newNode;
 	}
-	else if (heap->heap_size == 1) {
+	else {
 		heap->huffman[1] = newNode;
 	}
 	return ret;
@@ -318,6 +318,7 @@ void encodeWord(map<int, _HuffmanCode> *m) {
 		cout << "Make a new huffman code" << endl;
 		return;
 	}
+	cout << "Input a word : ";
 	string word;
 	getline(cin, word);
 	if(!word.empty()) {
@@ -343,6 +344,7 @@ void decodeCode(map<int, _HuffmanCode> *m) {
 		cout << "Make a new huffman code" << endl;
 		return;
 	}
+	cout << "Input a code : ";
 	string codeStr;
 	getline(cin, codeStr);
 	if(!codeStr.empty()) {

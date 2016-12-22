@@ -1,6 +1,6 @@
 #include "header.h"
 
-void LinkedListTest() {
+void LinkedListSimulation() {
 	LinkedList *head = NULL;
 	char command;
 	showCommand();
@@ -8,11 +8,13 @@ void LinkedListTest() {
 	while (command != 'q') {
 		int num;
 		if (command == 'i') {
+			cout << "Input a number : ";
 			cin >> num;
 			insertNode(&head, num);
 			showList(head);
 		}
 		else if (command == 'd') {
+			cout << "Input a number : ";
 			cin >> num;
 			deleteNode(&head, num);
 			showList(head);
@@ -44,6 +46,7 @@ void showCommand() {
 	cout << "* d : delete\t*" << endl;
 	cout << "* s : show\t*" << endl;
 	cout << "* r : reverse\t*" << endl;
+	cout << "* q : quit\t*" << endl;
 	cout << "*****************" << endl;
 }
 

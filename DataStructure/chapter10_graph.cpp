@@ -10,12 +10,14 @@ void graphSimulation() {
 			Graph::initailize();
 			Graph::createNewGraph();
 		}
-		else if (command == "s") {
-			Graph::showGraph();
-		}
+		else if (command == "s") Graph::showGraph();
 		else if (command == "k") {
 			Kruskal kru;
 			kru.doAlgorithm();
+		}
+		else if (command == "p") {
+			Prim prim;
+			prim.doAlgorithm();
 		}
 		showCommandInGraph();
 		cin >> command;
@@ -27,6 +29,7 @@ void showCommandInGraph() {
 	cout << "* c : create a graph\t*" << endl;
 	cout << "* s : show the graph\t*" << endl;
 	cout << "* k : kruskal algorithm\t*" << endl;
+	cout << "* p : prim algorithm\t*" << endl;
 	cout << "* q : quit\t\t*" << endl;
 	cout << "*************************" << endl;
 }
@@ -129,4 +132,34 @@ void Kruskal::doAlgorithm() {
 	}
 	for (int i = 0; i < graph.size() - 2; i++) 
 		cout << "vertex : " << vh.at(i).vertex << ", target : " << vh.at(i).target << ", cost : " << vh.at(i).cost << endl;
+}
+
+// Prim
+void Prim::doAlgorithm() {
+	if (graph.size() == 0) {
+		cout << "Create a graph first." << endl;
+		return;
+	}
+	set<int> sPrim; sPrim.insert(1);
+	vector<int> target, cost; 
+	cost.reserve(graph.size() - 2);	target.reserve(graph.size() - 2);
+	for (int i = 0; i < graph.size() - 2; ++i) {
+		int minCostNode = 1, min = INT_MAX;
+		for (set<int>::iterator si = sPrim.begin(); si != sPrim.end(); si++) {
+			for (map<int, int>::iterator mi = graph.at(*si).begin(); mi != graph.at(*si).end(); mi++) {
+				if (sPrim.find(mi->first) == sPrim.end()) {
+					if (min > mi->second) {
+						min = mi->second;
+						minCostNode = mi->first;
+					}
+				}
+			}
+		}
+		sPrim.insert(minCostNode);
+		target.push_back(minCostNode);
+		cost.push_back(min);
+	}
+	cout << "Prim result : start node 1" << endl;
+	for (int i = 0; i < cost.size(); ++i) 
+		cout << "target : " << target.at(i) << ", cost : " << cost.at(i) << endl;
 }

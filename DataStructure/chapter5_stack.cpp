@@ -1,9 +1,10 @@
 #include "header.h"
 
-void expressionTest() {
-	string expression;
+void expressionSimulation() {
+	string expression, dump;
 	_Queue *head = NULL, *node = NULL;
-	cout << "Enter infix expression : ";
+	cout << "Enter infix expression(q : quit) : ";
+	getline(cin, expression);
 	getline(cin, expression);
 	while (expression != "q") {
 		if ((head = convertInfixToPostfix(expression)) != NULL) {
@@ -14,7 +15,7 @@ void expressionTest() {
 		else {
 			cout << "Wrong infix expression!" << endl;
 		}
-		cout << "Enter infix expression : ";
+		cout << "Enter infix expression(q : quit) : ";
 		getline(cin, expression);
 	}
 }

@@ -5,6 +5,7 @@ void wordManager() {
 	_TreeNode *root = NULL;
 	showCommandInTree();
 	getline(cin, command);
+	getline(cin, command);
 	while (command != "q") {
 		if (command == "i") {
 			string word, meaning;
@@ -39,6 +40,7 @@ void wordManager() {
 		cout << "----------------------End of List----------------------" << endl;
 		showCommandInTree();
 		getline(cin, command);
+		// cin >> command;
 	}
 	removeAllNodes(root);
 	root = NULL;
