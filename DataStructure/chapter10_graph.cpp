@@ -1,6 +1,6 @@
 #include "header.h"
 
-vector<map<int, int>> Graph::graph;
+vector<vector<int>> Graph::graph;
 
 void graphSimulation() {
 	showCommandInGraph();
@@ -19,6 +19,10 @@ void graphSimulation() {
 			Prim prim;
 			prim.doAlgorithm();
 		}
+		else if (command == "d") {
+			Dijkstra dijk;
+			dijk.doAlgorithm();
+		}
 		showCommandInGraph();
 		cin >> command;
 	}
@@ -30,47 +34,45 @@ void showCommandInGraph() {
 	cout << "* s : show the graph\t*" << endl;
 	cout << "* k : kruskal algorithm\t*" << endl;
 	cout << "* p : prim algorithm\t*" << endl;
+	cout << "* d : dijkstra algorithm*" << endl;
 	cout << "* q : quit\t\t*" << endl;
 	cout << "*************************" << endl;
 }
 
 // Graph
 void Graph::initailize() {
-	for (int i = 0; i < graph.size(); i++) {
-		graph.at(i).clear();
-	}
+	for (vector<vector<int>>::iterator vvi = graph.begin(); vvi != graph.end(); vvi++) (*vvi).clear();
 	graph.clear();
 }
 
 void Graph::createNewGraph() {
 	cout << "Input the node number(less than 30 and more than 2) : ";
 	int nodeNum; cin >> nodeNum;
-	if (nodeNum > 31 || nodeNum < 2) {
+	if (nodeNum > MAX_NODE_NUM || nodeNum < MIN_NODE_NUM) {
 		cout << "Invalid value" << endl;
 		return;
 	}
-	graph.reserve(nodeNum + 1); map<int, int> init{};
-	for (int i = 0; i <= nodeNum; i++) graph.push_back(init);
+	graph.assign(nodeNum, vector<int>(nodeNum, MAX_COST + 1));
 	srand((unsigned int)time(NULL));
-	for (int i = 1; i <= nodeNum; ++i) {
+	for (int i = 0; i < nodeNum; ++i) {
 		int degree = rand() % (nodeNum - 1) + 1;
 		list<int> temp;
-		for (int j = 1; j <= nodeNum; ++j) {
+		for (int j = 0; j < nodeNum; ++j) {
 			if (j == i) continue;
-			if (graph.at(j).find(i) != graph.at(j).end()) {
-				graph.at(i).insert(pair<int, int>(j, graph.at(j).find(i)->second));
+			if (graph[i][j] <= MAX_COST) {
+				graph[j][i] = graph[i][j];
 				--degree;
 				continue;
 			}
 			temp.insert(temp.end(), j);
 		}
-		for (int j = 1; j <= degree; ++j) {
+		for (int j = 0; j < degree; ++j) {
 			int ranNum = rand() % temp.size();
 			list<int>::iterator li = temp.begin();
 			for (int k = 0; k < ranNum; k++) ++li;
-			int ranNum2 = rand() % 100 + 1;
-			graph.at(i).insert(pair<int, int>(*li, ranNum2));
-			graph.at(*li).insert(pair<int, int>(i, ranNum2));
+			int ranNum2 = rand() % MAX_COST + 1;
+			graph[i][*li] = ranNum2;
+			graph[*li][i] = ranNum2;
 			temp.erase(li);
 		}
 	}
@@ -82,12 +84,10 @@ void Graph::showGraph() {
 		return;
 	}
 	cout << "form : target node number(cost)" << endl;
-	for (int i = 1; i < graph.size(); i++) {
-		map<int, int>::iterator mi;
+	for (int i = 0; i < graph.size(); ++i) {
 		cout << "Node " << i << "\t: ";
-		for (mi = graph.at(i).begin(); mi != graph.at(i).end(); ++mi) {
-			cout << mi->first << "(" << mi->second << ") ";
-		}
+		for (int j = 0; j < graph[i].size(); ++j)
+			if (graph[i][j] <= MAX_COST) cout << j << "(" << graph[i][j] << ") ";
 		cout << endl;
 	}
 }
@@ -100,38 +100,38 @@ void Kruskal::doAlgorithm() {
 	}
 	typedef struct { int vertex; int target; int cost; } HalfGraph;
 	vector<HalfGraph> vh;
-	for (int i = 1; i < graph.size(); i++)
-		for (map<int, int>::iterator mi = graph.at(i).begin(); mi != graph.at(i).end(); mi++)
-			if (mi->first > i) vh.push_back(HalfGraph{ i, mi->first, mi->second });
+	for (int i = 0; i < graph.size(); i++) 
+		for (int j = 0; j < graph[i].size(); j++)
+			if (j > i && graph[i][j] <= MAX_COST) vh.push_back(HalfGraph{ i, j, graph[i][j] });
 	sort(vh.begin(), vh.end(), [](HalfGraph first, HalfGraph second)->bool {return first.cost < second.cost ? true : false; });
 	vector<HalfGraph>::iterator hgit = vh.begin();
 	vector<set<int>> vertexes;
-	for (int i = 0; i < graph.size() - 1; ++i) vertexes.push_back(set<int>{i + 1});
-	while (vertexes.at(0).size() < graph.size() - 1) {
+	for (int i = 0; i < graph.size(); ++i) vertexes.push_back(set<int>{i});
+	while (vertexes[0].size() < graph.size()) {
 		int index = -1;
 		for (int i = 0; i < vertexes.size(); ++i) 
-			if (vertexes.at(i).find(hgit->vertex) != vertexes.at(i).end()) {index = i; break;}
+			if (vertexes[i].find(hgit->vertex) != vertexes[i].end()) {index = i; break;}
 		for (int i = 0; i < vertexes.size(); ++i) {
-			if (vertexes.at(i).find(hgit->target) != vertexes.at(i).end()) {
+			if (vertexes[i].find(hgit->target) != vertexes[i].end()) {
 				if (i == index) {
 					hgit = vh.erase(hgit);
 					break;
 				}
 				else if (i > index) {
-					vertexes.at(index).insert(vertexes.at(i).begin(), vertexes.at(i).end());
-					vertexes.at(i).clear();
+					vertexes[index].insert(vertexes[i].begin(), vertexes[i].end());
+					vertexes[i].clear();
 				}
 				else {
-					vertexes.at(i).insert(vertexes.at(index).begin(), vertexes.at(index).end());
-					vertexes.at(index).clear();
+					vertexes[i].insert(vertexes[index].begin(), vertexes[index].end());
+					vertexes[index].clear();
 				}
 				hgit++;
 				break;
 			}
 		}
 	}
-	for (int i = 0; i < graph.size() - 2; i++) 
-		cout << "vertex : " << vh.at(i).vertex << ", target : " << vh.at(i).target << ", cost : " << vh.at(i).cost << endl;
+	for (int i = 0; i < graph.size() - 1; i++) 
+		cout << "vertex : " << vh[i].vertex << ", target : " << vh[i].target << ", cost : " << vh[i].cost << endl;
 }
 
 // Prim
@@ -140,17 +140,17 @@ void Prim::doAlgorithm() {
 		cout << "Create a graph first." << endl;
 		return;
 	}
-	set<int> sPrim; sPrim.insert(1);
+	set<int> sPrim; sPrim.insert(0);
 	vector<int> target, cost; 
-	cost.reserve(graph.size() - 2);	target.reserve(graph.size() - 2);
-	for (int i = 0; i < graph.size() - 2; ++i) {
-		int minCostNode = 1, min = INT_MAX;
+	cost.reserve(graph.size() - 1);	target.reserve(graph.size() - 1);
+	for (int i = 0; i < graph.size() - 1; ++i) {
+		int minCostNode = 0, min = MAX_COST + 1;
 		for (set<int>::iterator si = sPrim.begin(); si != sPrim.end(); si++) {
-			for (map<int, int>::iterator mi = graph.at(*si).begin(); mi != graph.at(*si).end(); mi++) {
-				if (sPrim.find(mi->first) == sPrim.end()) {
-					if (min > mi->second) {
-						min = mi->second;
-						minCostNode = mi->first;
+			for (int j = 0; j < graph[i].size(); ++j) {
+				if (sPrim.find(j) == sPrim.end() && graph[*si][j] <= MAX_COST) {
+					if (min > graph[*si][j]) {
+						min = graph[*si][j];
+						minCostNode = j;
 					}
 				}
 			}
@@ -159,7 +159,48 @@ void Prim::doAlgorithm() {
 		target.push_back(minCostNode);
 		cost.push_back(min);
 	}
-	cout << "Prim result : start node 1" << endl;
+	cout << "Prim result : start node 0" << endl;
 	for (int i = 0; i < cost.size(); ++i) 
-		cout << "target : " << target.at(i) << ", cost : " << cost.at(i) << endl;
+		cout << "target : " << target[i] << ", cost : " << cost[i] << endl;
+}
+
+// dijkstra
+void Dijkstra::doAlgorithm() {
+	if (graph.size() == 0) {
+		cout << "Create a graph first." << endl;
+		return;
+	}
+	cout << "Input the beginning node (0 ~ " << graph.size() - 1 << ") : ";
+	int beginNode = 0; cin >> beginNode;
+	if (beginNode >= graph.size()) {
+		cout << "Invalid node number" << endl;
+		return;
+	}
+	set<int> sDijk; sDijk.insert(beginNode);
+	vector<int> cost; cost.reserve(graph.size());
+	multimap<int, int> costWithNode;
+	for (int i = 0; i < graph.size(); ++i) {
+		cost.push_back(graph[beginNode][i]);
+		if (cost[i] <= MAX_COST && i != beginNode) costWithNode.insert(pair<int, int>(cost[i], i));
+	}
+	cost[beginNode] = 0;
+	for (int i = 0; i < graph.size() - 1; ++i) {
+		for (auto it = costWithNode.begin(); it != costWithNode.end(); ++it) {
+			if (sDijk.find(it->second) == sDijk.end()) {
+				sDijk.insert(it->second);
+				for (int j = 0; j < graph.size(); ++j) {
+					if (cost[j] > cost[it->second] + graph[it->second][j])
+						cost[j] = cost[it->second] + graph[it->second][j];
+					if(graph[it->second][j] <= MAX_COST)
+						costWithNode.insert(pair<int, int>(it->first, it->second));
+				}
+				costWithNode.erase(it);
+				break;
+			}
+			else it = costWithNode.erase(it);
+		}
+	}
+	cout << "Dijkstra result (form : node number(minimum cost))" << endl;
+	for (int i = 0; i < graph.size(); ++i) cout << i << "(" << cost[i] << ") ";
+	cout << endl;
 }

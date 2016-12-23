@@ -195,7 +195,10 @@ void sortingManager(string command);
 // chapter 10 - graph : kruskal, prim, dijkstra, floyd, topological sort
 class Graph {
 protected:
-	static vector<map<int, int>> graph;
+	static vector<vector<int>> graph;
+	static const int MAX_COST = 100;
+	static const int MAX_NODE_NUM = 30;
+	static const int MIN_NODE_NUM = 2;
 public:
 	virtual void doAlgorithm() = 0;
 	static void initailize();
@@ -209,8 +212,11 @@ public:
 };
 
 class Prim : public Graph {
-private:
+public:
+	void doAlgorithm();
+};
 
+class Dijkstra : public Graph {
 public:
 	void doAlgorithm();
 };

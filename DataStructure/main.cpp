@@ -24,7 +24,7 @@ int main(void) {
 		else if (command == "h") huffmanSimulation();
 		else if (command == "s") sortingSimulation();
 		else if (command == "g") graphSimulation();
-		else { cout << "Invalid command" << endl; }
+		else cout << "Invalid command" << endl;
 		showCommandInMain(); cin >> command;
 	}
 	return 0;
