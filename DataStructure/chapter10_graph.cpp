@@ -1,6 +1,7 @@
 #include "header.h"
 
 vector<vector<int>> Graph::graph;
+int Graph::ALL_MAX_COST = 0;
 
 void graphSimulation() {
 	showCommandInGraph();
@@ -43,6 +44,7 @@ void showCommandInGraph() {
 void Graph::initailize() {
 	for (vector<vector<int>>::iterator vvi = graph.begin(); vvi != graph.end(); vvi++) (*vvi).clear();
 	graph.clear();
+	ALL_MAX_COST = 0;
 }
 
 void Graph::createNewGraph() {
@@ -52,7 +54,8 @@ void Graph::createNewGraph() {
 		cout << "Invalid value" << endl;
 		return;
 	}
-	graph.assign(nodeNum, vector<int>(nodeNum, MAX_COST + 1));
+	ALL_MAX_COST = MAX_COST * (nodeNum - 1) + 1;
+	graph.assign(nodeNum, vector<int>(nodeNum, ALL_MAX_COST));
 	srand((unsigned int)time(NULL));
 	for (int i = 0; i < nodeNum; ++i) {
 		int degree = rand() % (nodeNum - 1) + 1;
@@ -181,23 +184,25 @@ void Dijkstra::doAlgorithm() {
 	multimap<int, int> costWithNode;
 	for (int i = 0; i < graph.size(); ++i) {
 		cost.push_back(graph[beginNode][i]);
-		if (cost[i] <= MAX_COST && i != beginNode) costWithNode.insert(pair<int, int>(cost[i], i));
+		if (cost[i] < ALL_MAX_COST && i != beginNode) costWithNode.insert(pair<int, int>(cost[i], i));
 	}
 	cost[beginNode] = 0;
 	for (int i = 0; i < graph.size() - 1; ++i) {
-		for (auto it = costWithNode.begin(); it != costWithNode.end(); ++it) {
-			if (sDijk.find(it->second) == sDijk.end()) {
-				sDijk.insert(it->second);
+		auto it = costWithNode.begin();
+		while (it != costWithNode.end()) {
+			auto temp = it++;
+			if (sDijk.find(temp->second) == sDijk.end()) {
+				sDijk.insert(temp->second);
 				for (int j = 0; j < graph.size(); ++j) {
-					if (cost[j] > cost[it->second] + graph[it->second][j])
-						cost[j] = cost[it->second] + graph[it->second][j];
-					if(graph[it->second][j] <= MAX_COST)
-						costWithNode.insert(pair<int, int>(it->first, it->second));
+					if (sDijk.find(j) == sDijk.end() && cost[j] > cost[temp->second] + graph[temp->second][j]) {
+						cost[j] = cost[temp->second] + graph[temp->second][j];
+						costWithNode.insert(pair<int, int>(cost[j], j));
+					}
 				}
-				costWithNode.erase(it);
+				costWithNode.erase(temp);
 				break;
 			}
-			else it = costWithNode.erase(it);
+			else costWithNode.erase(temp);
 		}
 	}
 	cout << "Dijkstra result (form : node number(minimum cost))" << endl;

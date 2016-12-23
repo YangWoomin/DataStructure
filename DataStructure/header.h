@@ -197,6 +197,7 @@ class Graph {
 protected:
 	static vector<vector<int>> graph;
 	static const int MAX_COST = 100;
+	static int ALL_MAX_COST;
 	static const int MAX_NODE_NUM = 30;
 	static const int MIN_NODE_NUM = 2;
 public:
