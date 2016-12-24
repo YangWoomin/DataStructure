@@ -24,6 +24,10 @@ void graphSimulation() {
 			Dijkstra dijk;
 			dijk.doAlgorithm();
 		}
+		else if (command == "f") {
+			Floyd floyd;
+			floyd.doAlgorithm();
+		}
 		showCommandInGraph();
 		cin >> command;
 	}
@@ -36,6 +40,7 @@ void showCommandInGraph() {
 	cout << "* k : kruskal algorithm\t*" << endl;
 	cout << "* p : prim algorithm\t*" << endl;
 	cout << "* d : dijkstra algorithm*" << endl;
+	cout << "* f : floyd algorithm\t*" << endl;
 	cout << "* q : quit\t\t*" << endl;
 	cout << "*************************" << endl;
 }
@@ -56,6 +61,7 @@ void Graph::createNewGraph() {
 	}
 	ALL_MAX_COST = MAX_COST * (nodeNum - 1) + 1;
 	graph.assign(nodeNum, vector<int>(nodeNum, ALL_MAX_COST));
+	for (int i = 0; i < nodeNum; ++i) graph[i][i] = 0;
 	srand((unsigned int)time(NULL));
 	for (int i = 0; i < nodeNum; ++i) {
 		int degree = rand() % (nodeNum - 1) + 1;
@@ -87,12 +93,15 @@ void Graph::showGraph() {
 		return;
 	}
 	cout << "form : target node number(cost)" << endl;
+	cout.setf(ios::right);
 	for (int i = 0; i < graph.size(); ++i) {
-		cout << "Node " << i << "\t: ";
+		cout << setw(2) << i << " : ";
 		for (int j = 0; j < graph[i].size(); ++j)
-			if (graph[i][j] <= MAX_COST) cout << j << "(" << graph[i][j] << ") ";
+			if (graph[i][j] <= MAX_COST) cout << setw(2) << j << setw(1) << "(" << setw(3) << graph[i][j] << setw(1) << ") ";
 		cout << endl;
 	}
+	setw(0);
+	cout.unsetf(ios::right);
 }
 
 // Kruskal
@@ -133,6 +142,7 @@ void Kruskal::doAlgorithm() {
 			}
 		}
 	}
+	cout << "Kruskal result" << endl;
 	for (int i = 0; i < graph.size() - 1; i++) 
 		cout << "vertex : " << vh[i].vertex << ", target : " << vh[i].target << ", cost : " << vh[i].cost << endl;
 }
@@ -143,14 +153,14 @@ void Prim::doAlgorithm() {
 		cout << "Create a graph first." << endl;
 		return;
 	}
-	set<int> sPrim; sPrim.insert(0);
+	set<int> nodeSet; nodeSet.insert(0);
 	vector<int> target, cost; 
 	cost.reserve(graph.size() - 1);	target.reserve(graph.size() - 1);
 	for (int i = 0; i < graph.size() - 1; ++i) {
 		int minCostNode = 0, min = MAX_COST + 1;
-		for (set<int>::iterator si = sPrim.begin(); si != sPrim.end(); si++) {
+		for (set<int>::iterator si = nodeSet.begin(); si != nodeSet.end(); si++) {
 			for (int j = 0; j < graph[i].size(); ++j) {
-				if (sPrim.find(j) == sPrim.end() && graph[*si][j] <= MAX_COST) {
+				if (nodeSet.find(j) == nodeSet.end() && graph[*si][j] <= MAX_COST) {
 					if (min > graph[*si][j]) {
 						min = graph[*si][j];
 						minCostNode = j;
@@ -158,7 +168,7 @@ void Prim::doAlgorithm() {
 				}
 			}
 		}
-		sPrim.insert(minCostNode);
+		nodeSet.insert(minCostNode);
 		target.push_back(minCostNode);
 		cost.push_back(min);
 	}
@@ -179,7 +189,7 @@ void Dijkstra::doAlgorithm() {
 		cout << "Invalid node number" << endl;
 		return;
 	}
-	set<int> sDijk; sDijk.insert(beginNode);
+	set<int> nodeSet; nodeSet.insert(beginNode);
 	vector<int> cost; cost.reserve(graph.size());
 	multimap<int, int> costWithNode;
 	for (int i = 0; i < graph.size(); ++i) {
@@ -191,10 +201,10 @@ void Dijkstra::doAlgorithm() {
 		auto it = costWithNode.begin();
 		while (it != costWithNode.end()) {
 			auto temp = it++;
-			if (sDijk.find(temp->second) == sDijk.end()) {
-				sDijk.insert(temp->second);
+			if (nodeSet.find(temp->second) == nodeSet.end()) {
+				nodeSet.insert(temp->second);
 				for (int j = 0; j < graph.size(); ++j) {
-					if (sDijk.find(j) == sDijk.end() && cost[j] > cost[temp->second] + graph[temp->second][j]) {
+					if (nodeSet.find(j) == nodeSet.end() && cost[j] > cost[temp->second] + graph[temp->second][j]) {
 						cost[j] = cost[temp->second] + graph[temp->second][j];
 						costWithNode.insert(pair<int, int>(cost[j], j));
 					}
@@ -208,4 +218,25 @@ void Dijkstra::doAlgorithm() {
 	cout << "Dijkstra result (form : node number(minimum cost))" << endl;
 	for (int i = 0; i < graph.size(); ++i) cout << i << "(" << cost[i] << ") ";
 	cout << endl;
+}
+
+// floyd
+void Floyd::doAlgorithm() {
+	vector<vector<int>> result(graph);
+	for (int i = 0; i < graph.size(); i++) result[i][i] = 0;
+	for (int i = 0; i < graph.size(); ++i)
+		for (int j = 0; j < graph.size(); ++j)
+			for (int k = 0; k < graph.size(); ++k)
+				if (result[j][k] > result[j][i] + result[i][k]) result[j][k] = result[j][i] + result[i][k];
+	cout << "Floyd result(table)" << endl;
+	cout.setf(ios::right); cout << setw(2) << "";
+	for (int i = 0; i < graph.size(); ++i) cout << setw(4) << i << " ";
+	cout << endl;
+	for (int i = 0; i < graph.size(); ++i) {
+		cout << setw(2) << i;
+		for (int j = 0; j < graph.size(); ++j) cout << setw(4) << result[i][j] << " ";
+		cout << endl;
+	}
+	cout.unsetf(ios::right);
+	setw(0);
 }

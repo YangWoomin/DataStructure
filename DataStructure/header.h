@@ -1,6 +1,7 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <map>
 #include <set>
@@ -218,6 +219,11 @@ public:
 };
 
 class Dijkstra : public Graph {
+public:
+	void doAlgorithm();
+};
+
+class Floyd : public Graph {
 public:
 	void doAlgorithm();
 };
