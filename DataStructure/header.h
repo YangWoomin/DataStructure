@@ -228,5 +228,16 @@ public:
 	void doAlgorithm();
 };
 
+class TopologicalSort : public Graph {
+private:
+	vector<int> publicResult;
+	vector<vector<int>> halfGraph;
+	int result;
+public:
+	void doAlgorithm();
+	void recursive(set<int> nodeSet, vector<int> noEntryEdgeNode);
+	void restRecursive(vector<int> rest);
+};
+
 void graphSimulation();
 void showCommandInGraph();

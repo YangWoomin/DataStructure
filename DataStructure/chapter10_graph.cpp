@@ -28,6 +28,11 @@ void graphSimulation() {
 			Floyd floyd;
 			floyd.doAlgorithm();
 		}
+		else if (command == "t") {
+			TopologicalSort topol;
+			topol.doAlgorithm();
+		}
+		else cout << "Invalid command" << endl;
 		showCommandInGraph();
 		cin >> command;
 	}
@@ -41,6 +46,7 @@ void showCommandInGraph() {
 	cout << "* p : prim algorithm\t*" << endl;
 	cout << "* d : dijkstra algorithm*" << endl;
 	cout << "* f : floyd algorithm\t*" << endl;
+	cout << "* t : topological sort\t*" << endl;
 	cout << "* q : quit\t\t*" << endl;
 	cout << "*************************" << endl;
 }
@@ -177,7 +183,7 @@ void Prim::doAlgorithm() {
 		cout << "target : " << target[i] << ", cost : " << cost[i] << endl;
 }
 
-// dijkstra
+// Dijkstra
 void Dijkstra::doAlgorithm() {
 	if (graph.size() == 0) {
 		cout << "Create a graph first." << endl;
@@ -220,7 +226,7 @@ void Dijkstra::doAlgorithm() {
 	cout << endl;
 }
 
-// floyd
+// Floyd
 void Floyd::doAlgorithm() {
 	vector<vector<int>> result(graph);
 	for (int i = 0; i < graph.size(); i++) result[i][i] = 0;
@@ -239,4 +245,61 @@ void Floyd::doAlgorithm() {
 	}
 	cout.unsetf(ios::right);
 	setw(0);
+}
+
+// Topological sort
+void TopologicalSort::doAlgorithm() {
+	halfGraph.assign(graph.size(), vector<int>(graph.size(), ALL_MAX_COST));
+	vector<int> noEntryEdgeNode;
+	set<int> nodeSet; for (int i = 0; i < graph.size(); ++i) nodeSet.insert(i);
+	for (int i = 0; i < graph.size(); ++i)
+		for (int j = 0; j < graph.size(); ++j)
+			if (graph[j][i] == 0)
+				halfGraph[j][i] = 0;
+			else if(graph[j][i] <= MAX_COST && i > j) 
+				halfGraph[j][i] = graph[j][i];
+	result = 0;
+	recursive(nodeSet, noEntryEdgeNode);
+	if(result == 0) cout << "No topological sort" << endl;
+}
+
+void TopologicalSort::recursive(set<int> nodeSet, vector<int> noEntryEdgeNode) {
+	auto sit = nodeSet.begin();
+	set<int> checkNode; for (int i = 0; i < noEntryEdgeNode.size(); ++i) checkNode.insert(noEntryEdgeNode[i]);
+	while (sit != nodeSet.end()) {
+		int i = 0;
+		while (i < halfGraph.size()) {
+			if (nodeSet.find(i) != nodeSet.end() && halfGraph[i][*sit] != 0 && halfGraph[i][*sit] <= MAX_COST) break;
+			else ++i;
+		}
+		if (i == halfGraph.size() && checkNode.find(*sit) == checkNode.end()) noEntryEdgeNode.push_back(*sit);
+		++sit;
+	}
+	if (noEntryEdgeNode.size() == halfGraph.size() - publicResult.size()) {
+		restRecursive(noEntryEdgeNode);
+		return;
+	}
+	for (int i = 0; i < noEntryEdgeNode.size(); ++i) {
+		publicResult.push_back(noEntryEdgeNode[i]);
+		vector<int> temp1(noEntryEdgeNode); temp1.erase(temp1.begin() + i);
+		set<int> temp2(nodeSet); temp2.erase(noEntryEdgeNode[i]);
+		recursive(temp2, temp1);
+		publicResult.pop_back();
+	}
+}
+
+void TopologicalSort::restRecursive(vector<int> rest) {
+	if (rest.size() == 0) {
+		cout << "Result " << ++result << " : ";
+		for (int i = 0; i < publicResult.size(); ++i)
+			cout << publicResult[i] << " ";
+		cout << endl;
+		return;
+	}
+	for (int i = 0; i < rest.size(); ++i) {
+		publicResult.push_back(rest[i]);
+		vector<int> temp(rest); temp.erase(temp.begin() + i);
+		restRecursive(temp);
+		publicResult.pop_back();
+	}
 }
