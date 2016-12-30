@@ -2,7 +2,6 @@
 
 int Sorting::size = 0;
 int* Sorting::_array = NULL;
-map<string, int> Sorting::Status;
 CRITICAL_SECTION Sorting::cs;
 int Sorting::count = 0;
 
@@ -97,7 +96,6 @@ void Sorting::initialize() {
 }
 
 void Sorting::reset() {
-	Status.clear();
 	setArray();
 	count = 0;	
 }

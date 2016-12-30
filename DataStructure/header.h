@@ -121,9 +121,8 @@ void decodeCode(map<int, _HuffmanCode> *m);
 // chapter 9 - sorting : selection, insertion, bubble, shell, merge, quick, heap, radix
 class Sorting {
 private:
-	const static int MAX_SIZE = 30000000;
+	const static int MAX_SIZE = 10000000;
 	static int size;
-	static map<string, int> Status;
 	static CRITICAL_SECTION cs;
 	static int count;
 protected:
@@ -241,3 +240,57 @@ public:
 
 void graphSimulation();
 void showCommandInGraph();
+
+// Chapter 11 - Hashing : linear probing, quadratic probing, double hashing, chaining
+#define A_KIND_OF_HASHING 4
+#define ID_MAX_LENGTH 3
+struct _Character {
+	string id;
+	int level;
+	string role;
+	_Character(string id, int level, string role)
+		: id(id), level(level), role(role) { }
+	void operator()(_Character& source) {
+		id = source.id;
+		level = source.level;
+		role = source.role;
+	}
+};
+typedef struct _Character Character;
+
+class AccountManagement {
+protected:
+	static vector<Character> originInfo;
+	vector<Character> hashTable;
+	static int hashTableSize;
+public:
+	static const int MAX_USER_NUMBER = 10000000;
+	static void createOriginInfo();
+	static int findUpperBoundPrimeNumber(int size);
+	void showHashTable();
+	void findUserInfo();
+	virtual void createHashTable() { };
+};
+
+class LinearProbing : public AccountManagement {
+public:
+	void createHashTable();
+};
+
+class QuadraticProbing : public AccountManagement {
+public:
+	void createHashTable();
+};
+
+class DoubleHashing : public AccountManagement {
+public:
+	void createHashTable();
+};
+
+class Chaining : public AccountManagement {
+public:
+	void createHashTable();
+};
+
+void hashingSimulation();
+void showCommandInHashing();
